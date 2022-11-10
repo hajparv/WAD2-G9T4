@@ -1,125 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-   <!-- Bootstrap CSS -->
+
+  <!-- Bootstrap CSS -->
 
 
-   <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../src/css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="../src/js/profile.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="../../src/css/index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="stylesheet" href="../src/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <!-- <script type="module" src="../src/js/index1.js"></script> -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="../src/js/profile.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
 
-   <style>
-    a{
-      font-family: 'Times New Roman', Times, serif;
+
+  <style>
+    .group {
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
+  </style>
+  <script>
+    var user_detail = localStorage.getItem("users")
+    console.log(user_detail)
+    var obj = JSON.parse(user_detail)
+    var uid = obj.uid
+    var username = obj.username
+    var email = obj.email
+    var busStop = obj.fav_bus_stop
+    var busService = obj.fav_service_no
 
-    body{
-      background-color:#efecdf
-      ;
-    }
-    
-   </style>
+    var user_routes = localStorage.getItem("user_routes")
+    console.log(user_routes)
+  </script>
 </head>
-<body>
+
+<body onload="get_data()">
   <!--NAVIGATION BAR-->
-      <div class="sticky-top p-3" >
-        <a href="../index.html">
-          logo
-        </a>
-        <h3 style="text-align: center">Profile</h3>
+  <div class="sticky-top p-3">
+    <a href="../index.html">
+      <img src="../src/img/logo2.png" alt="Logo" width='150' class="position-absolute top-0 start-0">
+    </a>
+    <h1 class="display-6 text-center fw-bold mt-2">
+      Profile<i class="fa-solid fa-user ms-5"></i>
+    </h1>
+  </div>
+
+  <hr>
+  <div class="container d-flex flex-column flex-md-row">
+    <nav class="navbar navbar-expand-md navbar-light d-flex flex-md-column">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle Navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
+        <ul class="navbar-nav w-100 d-flex flex-md-column text-center text-md-end">
+          <li>
+            <a href="#userName" class="nav-link" aria-current="page">Name</a>
+          </li>
+          <li>
+            <a href="#email" class="nav-link" aria-current="page">Email</a>
+          </li>
+          <li>
+            <a href="#busStop" class="nav-link" aria-current="page">Bus Stop</a>
+          </li>
+          <li>
+            <a href="#work" class="nav-link" aria-current="page">Work</a>
+          </li>
+        </ul>
       </div>
 
-      <hr>
-     <div class="container d-flex flex-column flex-md-row">
-            <nav class="navbar navbar-expand-md navbar-light d-flex flex-md-column">
-              
-              <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="#navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle Navigation">
-              <span class="navbar-toggler-icon"></span>
-              </button>
-      
-                  <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-                    <ul class="navbar-nav w-100 d-flex flex-md-column text-center text-md-end">
-                      <li>
-                        <a href="#name" class="nav-link" aria-current="page">Name</a>
-                      </li>
-                      <li>
-                        <a href="#email" class="nav-link" aria-current="page">Email</a>
-                      </li>
-                      <li>
-                        <a href="#saved" class="nav-link" aria-current="page">Saved Places</a>
-                      </li>
-                      <li>
-                        <a href="#account" class="nav-link" aria-current="page">Account</a>
-                      </li>
-                    </ul>
-                    </div>
+    </nav>
 
-              </nav>
-              
-        <main class="ps-0 ps-md-5 flex-grow-1">
+    <main class="ps-0 ps-md-5 flex-grow-1">
 
-          <div class="container overflow-auto">
+      <div class="container overflow-auto" id="app">
 
-            <h4>User name</h4>
-            <input id="userName" type='text'class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF" >  
-
-            <button type="button" class="btn"  onclick="checkIfUserExists(document.getElementById('userName').value)">Available?</button>
-
-          
-            <h4>Name</h4>
-            <input id="name" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;" >
-            <!-- <button type="button" class="btn"  onclick="updateName()">Update Name</button> -->
-         
-      <br>
-          
-            <h4>Email</h4>
-         
-            <input id="email" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;">
-
-            <!-- <button type="button" class="btn" onclick="updateEmail()">Update Email</button> -->
-         
-
-          <button type="button" class="btn" onclick="register()">Register</button> 
-          <!-- <button type="button" class="btn" onclick="deregister(document.getElementById('userName').value)">De-Register</button>  -->
-          <button type="button" class="btn" onclick="updateEmail()">Update Email</button> 
-
-          <h4>Saved Place</h4>
-         
-            <input id="saved" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;">
-            <button type="button" class="btn" onclick="updateSaved()">Update Saved Place</button> 
-          
-          <p id="status"></p>
-          <p id="latest"></p>
+        <div class="group">
+          <h4 class="fs-4">User name</h4>
+          <!-- <input id="userName" type='text' class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default"
+            style="background-color:white; border-color: hsla(311, 37%, 32%); border-width: 2px;" /> -->
+          <label id="userName" class="fs-5"></label><br>
         </div>
-        
 
 
-        <!-- The core Firebase JS SDK is always required and must be listed first -->
-        <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script> 
-        <!-- This is the API from Firebase Realtime Database -->
-        <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script> 
+        <!-- <button type="button" class="btn"  onclick="checkIfUserExists(document.getElementById('userName').value)">Available?</button> -->
 
-        <script src="../src/js/index.js"></script>
-        <script>
+
+        <!-- <h4>Name</h4>
+            <input id="fullName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;" :placeholder="name"> -->
+        <!-- <button type="button" class="btn"  onclick="updateName()">Update Name</button> -->
+
+        <br>
+        <div class="group">
+          <h4>Email</h4>
+          <div class="row">
+            <div class="col-6">
+              <input id="email" type="text" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default"
+                style="background-color:white; border-color: hsla(311, 37%, 32%); border-width: 2px;">
+            </div>
+            <div class="col-2">
+              <button type="button" class="btn" style="background-color:rgb(112, 52, 101); color:white"
+                onclick="updateEmail()">Update Email</button>
+            </div>
+          </div>
+          <!-- <input id="email" type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default"
+            style="background-color:white; border-color: hsla(311, 37%, 32%); border-width: 2px;"> -->
+
+        </div>
+        <!-- <button type="button" class="btn" onclick="updateEmail()">Update Email</button> -->
+
+
+        <!-- <button type="button" class="btn" onclick="register()">Register</button> 
+          <button type="button" class="btn" onclick="login()">Login</button>  -->
+        <!-- <button type="button" class="btn" onclick="deregister(document.getElementById('userName').value)">De-Register</button>  -->
+
+        <div class="group">
+          <h4 class="fs-4">Bus Stop</h4>
+
+          <!-- <input id="busStop" type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default"
+            style="background-color:white; border-color: hsla(311, 37%, 32%); border-width: 2px;">
+          <button type="button" class="btn" onclick="updateSaved()">Update Location</button> -->
+          <label id="busStop" class="fs-5"></label><br>
+        </div>
+
+        <div class="group">
+          <h4 class="fs-4">Bus Service</h4>
+          <!-- <input id="busService" type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default"
+            style="background-color:white; border-color: hsla(311, 37%, 32%); border-width: 2px;">
+          <button type="button" class="btn" onclick="updateSaved()">Update Location</button> -->
+          <label id="busService" class="fs-5"></label><br>
+
+        </div>
+
+
+
+
+        <p id="status"></p>
+        <p id="latest"></p>
+      </div>
+
+
+
+      <!-- The core Firebase JS SDK is always required and must be listed first -->
+      <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+      <!-- This is the API from Firebase Realtime Database -->
+      <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+
+      <script src="../src/js/index.js"></script>
+
+      <script>
+        function get_data() {
+          if (user_detail != null) {
+            firebase.database().ref('users/' + uid).once("value", snap => {
+
+              console.log(snap.val())
+              var detail = snap.val()
+              console.log(detail.username)
+              document.getElementById('userName').innerText = detail.username;
+              document.getElementById('email').value = detail.email;
+              document.getElementById('busStop').innerText = detail.fav_bus_stop;
+              document.getElementById('busService').innerText = detail.fav_service_no;
+
+            })
+            // document.getElementById('userName').value = username;
+            // document.getElementById('email').value = email;
+            // document.getElementById('busStop').value = busStop;
+            // document.getElementById('busService').value = busService;
+
+
+          } else {
+            document.getElementById('userName').innerText = "";
+            document.getElementById('email').innerText = "";
+            document.getElementById('busStop').innerText = "";
+            document.getElementById('busService').value = "";
+          }
+        }
+      </script>
+
+
+
+
+      <!-- <script>
           // Your web app's Firebase configuration
           // You can find yours at Firebase -> Project Overview -> Project Settings
           // -> SDK setup and configuration -> CDN
@@ -151,6 +231,9 @@
           var user = firebase.database().ref('users/' + userName);
           user.once('value').then((snapshot) => {
             if(snapshot.exists()) {
+              console.log(snapshot.val())
+              console.log(snapshot.val().name)
+              document.getElementById("name").value=snapshot.val().name
               document.getElementById("status").innerText = "User name has already been taken.";
             }
             else {
@@ -162,16 +245,17 @@
         //The following example demostrates how to add data
         function register() {
           var userName = document.getElementById("userName").value;
-          var name = document.getElementById("name").value;
+          var fullName = document.getElementById("fullName").value;
           var email = document.getElementById("email").value;
           var saved = document.getElementById("saved").value;
-          writeUserDataWithCompletion(userName,name,email,saved);
+          writeUserDataWithCompletion(userName,fullName,email,saved);
         }
         
         //The following writes the data
-        function writeUserDataWithCompletion(userName, name, email,saved) {
+        function writeUserDataWithCompletion(userName,fullName, email,saved) {
           firebase.database().ref('users/' + userName).set({
-            name: name,
+            userName: userName,
+            fullName:fullName,
             email: email,
             saved:saved
           }, function(error) {
@@ -196,11 +280,12 @@
         
         function updateEmail() {
           var userName = document.getElementById("userName").value;
-          var name = document.getElementById("name").value;
+          var fullName = document.getElementById("fullName").value;
           var email = document.getElementById("email").value;
           var saved = document.getElementById("saved").value;
           var updates = {};
-          updates['/users/' + userName + "/" + 'name'] = name;
+          updates['/users/' + userName + "/" + 'userName'] = userName;
+          updates['/users/' + userName + "/" + 'fullName'] = fullName;
           updates['/users/' + userName + "/" + 'email'] = email;
           updates['/users/' + userName + "/" + 'saved'] = saved;
           firebase.database().ref().update(updates);
@@ -218,19 +303,58 @@
           firebase.database().ref().update(updates);
         }
 
-        </script>
+        function displayData(){
+          var user = firebase.database().ref('users/' + userName);
+          user.once('value').then((snapshot) => {
+            if(snapshot.exists()) {
+              document.getElementById("userName").innerText = "User name has already been taken.";
+        }else {
+              document.getElementById("status").innerText = "User name is available.";
+            }
+          });
+        }
+        function login() {
+          // Get all our input fields
+          this.userName = document.getElementById("userName").value;
+          this.name = document.getElementById("fullName").value;
+          this.email = document.getElementById("email").value;
+          this.saved = document.getElementById("password").value;
+        
+          // Validate input fields
+          if (validate_email(email) == false || validate_password(password) == false) {
+            alert('Email or Password is Outta Line!!')
+            return
+            // Don't continue running the code
+          }
+        }
+
+
+       
+
+        // const dbRef = ref(getDatabase());
+        // get(child(dbRef, `users/xy`)).then((snapshot) => {
+        //   if (snapshot.exists()) {
+        //     console.log(snapshot.val());
+        //   } else {
+        //     console.log("No data available");
+        //   }
+        // }).catch((error) => {
+        //   console.error(error);
+        // });
+
+        </script> -->
 
 
 
-        </div>
+  </div>
 
-        </main>
+  </main>
   </div>
 
 
+  <script src="../src/js/profile.js"></script>
 
-
-</script>
-  </body>
+  </script>
+</body>
 
 </html>

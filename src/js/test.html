@@ -29,7 +29,40 @@
 
     </div>
 
-    <script src="traffic.js"></script>
+    <script type="module" src="traffic.js"></script>
+    <script>
+        var firebaseConfig = {
+                                apiKey: "AIzaSyC6FeItoMxFnT9yIv5F8zukSMvhnZrH0YU",
+                                authDomain: "onestopper.firebaseapp.com",
+                                databaseURL: "https://onestopper-default-rtdb.asia-southeast1.firebasedatabase.app",
+                                projectId: "onestopper",
+                                storageBucket: "onestopper.appspot.com",
+                                messagingSenderId: "64753765868",
+                                appId: "1:64753765868:web:2f5a596f8d4a62d0e9c4c9",
+                                measurementId: "G-DE6MGV1BWE"
+                            };
+
+                            if (!firebase.apps.length) {
+                                firebase.initializeApp(firebaseConfig);
+                            } else {
+                                
+                            }
+
+                var uid = JSON.parse(localStorage.getItem("users")).uid
+
+                var ref = firebase.database().ref("/user_routes/" + uid)
+
+                ref.on("value", function(snapshot) {
+                    //CODE HERE
+                    var route = snapshot.val().route.route
+                    console.log(route)
+                }, function(error) {
+                    console.log("ERROR", error)
+                })
+    </script>
+    
+
+
     
 </body>
 </html>

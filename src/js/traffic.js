@@ -1,8 +1,11 @@
+let all_accident = []
+
 var app = Vue.createApp({
 
     data() {
         return {
-            road_names: [],
+            test: "hello world 123",
+            accidents: [],
             services_affected: [],
             
             selected_service_no: '',
@@ -24,8 +27,25 @@ var app = Vue.createApp({
             })
             .then(response => {
 
-                var response = response.data[0].value
+                var response = response.data
                 console.log(response)
+                
+                for(var res of response){
+                    //response is the array of objects of 500s
+                    let accident_object = res.value
+                    //res.value is the individual arrays with objects
+                    console.log(res.value)
+                    if(accident_object != [] ){
+                        for(var accident of accident_object){
+                            this.accidents.push(accident)
+                            all_accident.push(accident)
+                        }
+                        console.log("===get_accident()===")
+                        console.log(all_accident)
+                
+                    }
+                    console.log(this.accidents)
+                }
                 //array of objects(key = number key = type,lat,long)
                 this.accident_details
             })
@@ -46,15 +66,19 @@ var app = Vue.createApp({
             .then(response => {
                 console.log('test')
                 var response = response.data
-                for(res of response)
                 console.log(response)
+                for(res of response){
+                    console.log(res)
+                }
+                
                 
             })
             .catch(error => {
                 console.log(error.message)
             })
         }
-        
     }
 })
+
 app.mount("#appp")
+// alert("this is traffic js")

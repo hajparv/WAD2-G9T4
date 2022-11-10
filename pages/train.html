@@ -13,8 +13,10 @@
     <link rel="stylesheet" href="../src/css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
+    <link rel="stylesheet" href="../src/css/index.css">
     <link rel="stylesheet" href="../src/css/train.css">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
 
     <style>
         .green {
@@ -28,14 +30,31 @@
         .red {
             color: red;
         }
+
+        .navbar-nav .nav-link.active,
+        .navbar-nav .show>.nav-link {
+            color: rgb(112, 52, 101);
+        }
     </style>
+
+    <script>
+        var user_detail = localStorage.getItem("users")
+        console.log(user_detail)
+        var obj = JSON.parse(user_detail)
+        var username = obj.username
+        console.log(username)
+    </script>
 
 
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg fs-4 fw-bold" style="background-color:#C79E53; color: #C4A872;">
+<body onload="user_login()">
+    <nav class="navbar navbar-expand-lg fs-4 fw-bold sticky-top" style="background-color:#e5dfdf;">
         <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../src/img/logo2.png" alt="Logo" width='90'
+                    class="d-inline-block align-text-top">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -43,57 +62,64 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav nav-fill w-100">
                     <li class="nav-item">
-                        <a class="nav-link active text-decoration-underline" aria-current="page"
-                            href="../../index.html">Home</a>
+                        <a class="nav-link nav_bar_text" aria-current="page" href="../index.html">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle pb-0" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle pb-0 nav_bar_text" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Bus
                         </a>
-                        <ul class="dropdown-menu" style="background-color:#C79E53;">
-                            <li><a class="dropdown-item fw-bold" href="pages/bus/bus_arrival.html">Bus Arrival Time</a>
+                        <ul class="dropdown-menu" style="background-color:#e5dfdf;">
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus/bus_arrival.html">Bus
+                                    Arrival Time</a>
                             </li>
-                            <li><a class="dropdown-item fw-bold" href="#">Bus Services</a></li>
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus/bus_service_map.html">Bus
+                                    Services</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Train</a>
+                        <a class="nav-link nav_bar_text active text-decoration-underline" href="#">Train</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Taxi</a>
+                        <a class="nav-link nav_bar_text" href="taxi.html">Taxi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Car</a>
+                        <a class="nav-link nav_bar_text" href="./car.html">Car</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Traffic</a>
+                        <a class="nav-link nav_bar_text" href="traffic/traffic_check.html">Traffic</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav float-end">
+                <ul class="navbar-nav float-end" id="profile">
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="fa-sharp fa-solid fa-gear"></i></a>
+                        <a href="./profile.html" class="nav-link nav_bar_text"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="fa-solid fa-user"></i></a>
+                        <a href="../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
     <!-- TITLE -->
-    <h1 class="display-1 text-center fw-bold">
-        Train Disruptions
+    <h1 class="display-6 text-center fw-bold mt-5">
+        Train Disruptions <img src="../src/img/train/train.png" style="width:150px ">
     </h1>
 
     <div class="container-fluid pt-5 py-5 d-flex align-items-center justify-content-center">
 
-      <div id="app">
-        <div v-if="status==1">
-          <h2>No disruptions :) </h2>
-        </div>
+        <div id="app">
+            {{get_station_name}}
+            <div class="alert alert-success p-5" role="alert">
+                <h2>{{Notif}} </h2>
+               
+            </div>
 
-        <div v-else>
+            <img src="../src/img/train/mrt_map.jpg" style="width: 500px;">
+
+            <!-- <div>
+           
           <table border="1">
             <tr>
               <th v-for="header of table_headers">
@@ -109,24 +135,24 @@
             </tr>
         </table>
          
+        </div> -->
         </div>
-      </div>
 
 
         <!-- FOOTER -->
         <div class="fixed-bottom container-fluid text-center fs-1" style="color:#C79E53;">
             <ul class="list-inline">
                 <li class="list-inline-item">
-                    <a href="#" class="nav-link"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-instagram"></i></a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="#" class="nav-link"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-facebook-f"></i></a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="#" class="nav-link"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-twitter"></i></a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="#" class="nav-link"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-linkedin"></i></a>
                 </li>
             </ul>
         </div>
@@ -135,8 +161,25 @@
             integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
         </script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-       
-        <script src="../src/js/train.js"></script>
+
+    <script src="../src/js/train.js"></script>
+
+    <script>
+        function user_login() {
+            console.log('user_login')
+            if (user_detail != null) {
+                console.log('hree')
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
+                    </li>`
+            } else {
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li>`
+            }
+        }
+    </script>
 
 </body>
 

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Arrival Time</title>
+
+    <!-- Vue.js 3 CDN -->
+    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../src/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWyI5hJe5X7W9Svu7sVQCsUt3Q9JVdOqk&callback=initMap">
+    </script>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+
+    <!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
+
+    <link rel="stylesheet" href="../../src/css/bus_arrival.css">
+
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <!-- This is the API from Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+
+    <style>
+        .green {
+            color: green;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .yellow {
+            color: #CCCC00;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .red {
+            color: red;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        #map {
+            /* height: 400px; */
+            /* The height is 400 pixels */
+            width: 100%;
+            /* The width is the width of the web page */
+        }
+
+        .navbar-nav .nav-link.active,
+        .navbar-nav .show>.nav-link {
+            color: rgb(112, 52, 101);
+        }
+    </style>
+
+    <script>
+        var user_detail = localStorage.getItem("users")
+        console.log(user_detail)
+        var obj = JSON.parse(user_detail)
+        var username = obj.username
+        console.log(username)
+    </script>
+
+
+</head>
+
+<body onload="check_user()">
+    <nav class="navbar navbar-expand-lg fs-4 fw-bold sticky-top"
+        style="background-color:#e5dfdf; color: rgb(112, 52, 101);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../../src/img/logo2.png" alt="Logo" width='90' class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav nav-fill w-100">
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" aria-current="page" href="../../index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle pb-0 active text-decoration-underline nav_bar_text" href="#"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Bus
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus_arrival.html">Bus Arrival
+                                    Time</a>
+                            </li>
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus_service_map.html">Bus
+                                    Services</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../train.html">Train</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="#">Taxi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../car.html">Car</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../traffic/traffic_check.html">Traffic</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav float-end" id="profile">
+                    <li class="nav-item">
+                        <a href="../profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- TITLE -->
+    <h1 class="display-6 text-center fw-bold mt-5">
+        Bus Services <img src="../../src/img/bus/bus.png" style="width:160px ">
+    </h1>
+
+
+
+    <div class="container pt-5 py-5 mx-auto">
+
+
+        <!-- Tab panes -->
+        <div id="app">
+            {{get_bus_stops}}
+            {{get_bus_service}}
+            {{get_bus_routes}}
+
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <h2 class="fw-bold fs-4">Search for a Bus Service:</h2>
+                </div>
+            </div>
+
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-4">
+
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                        aria-describedby="inputGroup-sizing-default" id="name" v-model="selected_service_no"
+                        @keyup="auto_complete_bus_service_search()" placeholder="Enter a Service No"
+                        style="border-color: hsla(311, 37%, 32%); border-width: 2px;">
+
+
+                    <div v-show="auto_complete_suggestion_service.length > 0">
+                        <ul id="search">
+                            <li v-for="suggestion of auto_complete_suggestion_service"
+                                v-on:click="fill_bus_service(suggestion)">
+                                {{suggestion}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <a href="#arr_timings">
+                        <button type="button" class="btn btn-success" v-on:click="get_service_sequence()"
+                            onclick="user_login()">Go</button>
+                        <span id="fav" class="ms-2"></span>
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="row justify-content-center mb-5" v-if="direction_dropdown">
+                <div class="col-md-4">
+                    <select v-model="direction" class="form-select form-select-lg mb-3" id="dropdown"
+                        aria-label=".form-select-lg example">
+                        <option v-for="(value, key) of bus_direction_points" v-bind:value="key" id="dropdown-list">
+                            {{Object.keys(value)[0]}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <a href="#arr_timings">
+                        <button type="button" class="btn btn-success mt-2" v-on:click="get_google_map()">Go</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- FIRST INPUT BOX -->
+            <!-- <div class="container-fluid w-50 mx-auto mb-5">
+                <h2 class="fw-bold fs-4">Search for a Bus Service:</h2>
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" aria-label="Sizing example input"
+                            aria-describedby="inputGroup-sizing-default" id="name" v-model="selected_service_no"
+                            @keyup="auto_complete_bus_service_search()" placeholder="Enter a Service No"
+                            style="border-color: hsla(311, 37%, 32%); border-width: 2px;">
+
+
+                        <div v-show="auto_complete_suggestion_service.length > 0">
+                            <ul id="search">
+                                <li v-for="suggestion of auto_complete_suggestion_service"
+                                    v-on:click="fill_bus_service(suggestion)">
+                                    {{suggestion}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-success" v-on:click="get_service_sequence()"
+                            onclick="user_login()">Go</button>
+                        <span id="fav" class="ms-2"></span>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- SECOND DROP DOWN LIST -->
+
+            <!-- <div class="container-fluid w-50 mx-auto mb-5" v-if="direction_dropdown">
+                <h2 class="fw-bold fs-4">Select a direction:</h2>
+                <div class="row">
+                    <div class="col-8">
+                        <select v-model="direction" class="form-select form-select-lg mb-3" id="dropdown"
+                            aria-label=".form-select-lg example">
+                            <option v-for="(value, key) of bus_direction_points" v-bind:value="key" id="dropdown-list">
+                                {{Object.keys(value)[0]}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success mt-2" v-on:click="get_google_map()">Go</button>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- DISPLAY SERVICE NO -->
+            <div v-if="table_shown">
+                <h3 class="text-center fw-bold fs-4" id="service_no">
+                    {{display_service_no}}</h3>
+            </div>
+
+            <!-- DISPLAY MAP -->
+            <div id="map"></div>
+            <!-- DISPLAY ARRIVAL TABLE  -->
+            <div v-if="table_shown">
+                <h3 class="fw-bold fs-1 text-decoration-underline" id="service_no">
+                    Bus Arrival Timings</h3>
+
+                <table class="table mx-auto mt-5">
+                    <thead>
+                        <tr>
+                            <th scope="col">Bus Stop Code</th>
+                            <th scope="col">Bus Stop Name</th>
+                            <th scope="col">Bus Timing</th>
+                        </tr>
+                    </thead>
+
+                    <tr v-for="time in service_time">
+                        <td>{{time.code}}</td>
+                        <td>{{time.name}}</td>
+                        <td v-html="time.str"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- FOOTER -->
+    <div class="container-fluid text-center fs-1">
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-instagram"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text "><i class="fa-brands fa-facebook-f"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-twitter"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-linkedin"></i></a>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="../../src/js/bus_arrival.js"></script> -->
+    <script src="../../src/js/bus/bus_service_map.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyC6FeItoMxFnT9yIv5F8zukSMvhnZrH0YU",
+            authDomain: "onestopper.firebaseapp.com",
+            databaseURL: "https://onestopper-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "onestopper",
+            storageBucket: "onestopper.appspot.com",
+            messagingSenderId: "64753765868",
+            appId: "1:64753765868:web:2f5a596f8d4a62d0e9c4c9",
+            measurementId: "G-DE6MGV1BWE"
+        };
+        // Initialize Firebase
+
+        firebase.initializeApp(firebaseConfig);
+        // Initialize variables
+        // import { getDatabase, ref, onValue } from "firebase/database";
+        // import { getAuth } from "firebase/auth";
+        // import { getAuth } from "firebase/auth";
+        // const auth = firebase.auth()
+        const database = firebase.database()
+
+        // TO CHECK IF USER
+        // function user_login() {
+        //     console.log('user_login')
+        //     if (user_detail != null) {
+        //         console.log('hree')
+        //         document.getElementById('fav').innerHTML =
+        //             `<button type="button" class="btn btn-secondary checked"
+        //     onclick="save_bus_stop()" id='fav_button'><i class="fa-solid fa-star"></i> Favourite</button>`;
+        //     }
+        // }
+
+        function check_user() {
+            console.log('user_login')
+            if (user_detail != null) {
+                console.log('hree')
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="../profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
+                    </li>`
+            } else {
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li>`
+            }
+        }
+
+        // TO SAVE THE FAV BUS STOP
+        function save_bus_stop() {
+            var user_detail = localStorage.getItem("users")
+            console.log(user_detail)
+            var obj = JSON.parse(user_detail)
+            var uid = obj.uid
+            console.log(uid)
+            var bus_stops = ''
+            firebase.database().ref('users/' + uid).once("value", snap => {
+
+                console.log(snap.val())
+                bus_stops = snap.val().fav_bus_stop
+
+                if (bus_stops == '') {
+                    var users = firebase.database().ref('users');
+                    document.getElementById('fav_button').style.color += 'orange'
+                    var service_no = document.getElementById('service_no').innerText
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var fav_bus_stop = obj.fav_bus_stops
+                    console.log(fav_bus_stop)
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var uid = obj.uid
+                    console.log(uid)
+
+                    var updates = {};
+                    updates['/users/' + uid + "/" + 'fav_service_no'] = service_no;
+                    firebase.database().ref().update(updates);
+                } else {
+                    var users = firebase.database().ref('users');
+                    document.getElementById('fav_button').style.color += 'orange'
+                    var service_no = document.getElementById('service_no').innerText
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var fav_bus_stop = obj.fav_bus_stops
+                    console.log(fav_bus_stop)
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var uid = obj.uid
+                    console.log(uid)
+
+                    var updates = {};
+                    updates['/users/' + uid + "/" + 'fav_service_no'] = service_no;
+                    firebase.database().ref().update(updates);
+                }
+            })
+            // var user = firebase.database().ref('users/' + uid);
+            // user.once('value').then((snapshot) => {
+            //     if (snapshot.exists()) {
+            //         console.log(snapshot)
+            //         document.getElementById("status").innerText = "User ID has already been taken.";
+            //     } else {
+            //         document.getElementById("status").innerText = "User ID is available.";
+            //     }
+            // });
+        }
+    </script>
+
+</body>
+
+</html>

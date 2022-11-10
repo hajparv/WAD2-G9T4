@@ -1,19 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-<link rel="stylesheet" href="src/css/index.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../src/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
+        </script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <!-- This is the authentication API from Firebase Realtime Database -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>  -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-database.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo&callback=initMap"
+        async defer></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+    <script>
+        var values_outside = []
+    </script>
+    <title>One-Stop Planner</title>
+
+    <style>
+        #appp .row {
+            position: flex;
+        }
+
+        #appp .row .left {
+            flex: 31%;
+            background-color: white;
+            padding: 4vh;
+        }
+
+        #appp .row .middle {
+            flex: 49%;
+            height: 90vh;
+            padding: 4vh;
+        }
+        #appp .row .right {
+            flex: 20%;
+            height: 90vh;
+            padding: 4vh;
+        }
+        #map {
+            box-shadow: 2px 2px 2px 2px #999999;
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg fs-4 fw-bold" style="background-color:#C79E53; color: #C4A872;">
+
+<body id="appp">
+    <!-- NAVIGATION BAR -->
+
+    <nav class="navbar navbar-expand-lg fs-4 fw-bold sticky-top" style="background-color:#e5dfdf;">
         <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../../src/img/logo2.png" alt="Logo" width='90'
+                    class="d-inline-block align-text-top">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -21,44 +76,396 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav nav-fill w-100">
                     <li class="nav-item">
-                        <a class="nav-link active text-decoration-underline" aria-current="page"
-                            href="../../index.html">Home</a>
+                        <a class="nav-link nav_bar_text" aria-current="page" href="../../index.html">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle pb-0" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle pb-0 nav_bar_text" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Bus
                         </a>
-                        <ul class="dropdown-menu" style="background-color:#C79E53;">
-                            <li><a class="dropdown-item fw-bold" href="pages/bus/bus_arrival.html">Bus Arrival Time</a>
+                        <ul class="dropdown-menu" style="background-color:#e5dfdf;">
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="../bus/bus_arrival.html">Bus Arrival
+                                    Time</a>
                             </li>
-                            <li><a class="dropdown-item fw-bold" href="#">Bus Services</a></li>
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="../bus/bus_service_map.html">Bus
+                                    Services</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Train</a>
+                        <a class="nav-link nav_bar_text" href="../train.html">Train</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Taxi</a>
+                        <a class="nav-link nav_bar_text" href="#">Taxi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Car</a>
+                        <a class="nav-link nav_bar_text" href="#">Car</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Traffic</a>
+                        <a class="nav-link active text-decoration-underline nav_bar_text"
+                            href="traffic_check.html">Traffic</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav float-end">
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="fa-sharp fa-solid fa-gear"></i></a>
+                        <a href="../profile.html" class="nav-link nav_bar_text"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="fa-solid fa-user"></i></a>
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"
+                                data-bs-toggle="modal" data-bs-target="#modal" onClick="login"></i></a>
+
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+
+
+    <h1 class="display-6 text-center fw-bold mt-5">
+        Traffic Conditions <img src="../../src/img/traffic/traffic-light-icon.png" style="width:60px ">
+    </h1>
+
+
+
+
+    <div class="modal" id="modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Login</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body mx-auto">
+                    <!-- <iframe id="iframe_${record.name}" width="560" height="50" src="" frameborder="0" 
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+
+
+                    <form>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label"></label>
+                            <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp"
+                                placeholder="Email">
+                            <div id="emailHelp" class="form-text"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label"></label>
+                            <input type="password" class="form-control" id="InputPassword1" placeholder="Password">
+                        </div>
+                        <br>
+                        <button type="submit" class="btn justify-content" style="background-color: #c4a872;">Go</button>
+                    </form>
+
+                    <h4 style="text-align: center">OR</h4>
+                    <button type="submit" class="btn " style="background-color: #c4a872 ;justify-content: center; ">Sign
+                        up</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+                
+        <div class="left" >
+            
+            <div class="card" >
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align:center; font-weight:bold;" id="left1">There are no obstructions on your path right now</h5>
+                    <h6 class="card-subtitle mb-2 text-muted"></h6>
+                    <p class="card-text"></p>
+                    <button type="button" class="btn btn-success" href="../../index.html">Home</button>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- <div >
+            <button type="button" id="button2" onclick="get_user_location()"></button>
+        </div> -->
+        <div class="middle">
+            <div id="map"></div>
+        </div>
+        <div class="right">
+            <div id="legend">
+                <div class="card" >
+                    <div class="card-body">
+                        <h5 class="card-title" style="text-align:center; font-weight:bold;">Legend</h5>
+                        <br>
+                            <img src="../../src/img/traffic/roadblock.png" style="width:40px">:roadblock
+                        </br>
+                        <br>
+                            <img src="../../src/img/traffic/roadwork_color.png" style="width:40px">:roadwork
+                        </br>
+                        <br>
+                            <img src="../../src/img/traffic/breakdown_color.png" style="width:40px">:breakdown
+                        </br>
+                        <row>
+                            <img src="../../src/img/traffic/accident_color.png" style="width:40px">:accident
+                        </row>
+                        <br>
+                            <img src="../../src/img/traffic/abandoned.png" style="width:40px">:abandoned car
+                        </br> 
+                        <br>
+                            <img src="../../src/img/traffic/misc.png" style="width:40px">:misc
+                        </br>
+                        <br>
+                            <img src="../../src/img/traffic/congestion-removebg-preview.png" style="width:40px">:congestion
+                        </br>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="container-fluid text-center fs-1">
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-instagram"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text "><i class="fa-brands fa-facebook-f"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-twitter"></i></a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-linkedin"></i></a>
+            </li>
+        </ul>
+    </div>
+
+
+
+    <script>
+        function go_home(){
+            "http://www.w3schools.com"
+        }
+        function get_user_location() {
+            if (navigator.geolocation) {
+                console.log('jere')
+                pos = {}
+                // navigator.geolocation.getCurrentPosition(this,showposition,errorCoor,{maximumAge:60000, timeout:5000, enableHighAccuracy:true})
+                navigator.geolocation.getCurrentPosition(position => {
+                    pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                }, () => {
+                    // Browser supports geolocation, but user has denied permission
+                    pos = {
+                        lat: 1.29,
+                        lng: 103.8
+                    };
+                }, {
+                    timeout: 50000
+                });
+            } else {
+                // Browser doesn't support geolocation
+                pos = {
+                    lat: 1.29,
+                    lng: 103.8
+                };
+            }
+            console.log(pos)
+        }
+        function initMap() {
+
+            var loc = {
+                lat: 1.2963,
+                lng: 103.8502
+            };
+            var map = new google.maps.Map(document.getElementById("map"), {
+                center: loc,
+                zoom: 12,
+            });
+
+            window.map = map
+
+            var marker = new google.maps.Marker({
+                position: loc,
+                map: window.map
+            });
+
+            let api_endpoint_url1 = '../../src/js/traffic_accident.php'
+            axios.get(api_endpoint_url1, {
+                headers: {
+                    'AccountKey': 'rA62Al3wSpWoBqzOBOIC6g==',
+                    'accept': 'application/json',
+                }
+            })
+                .then(response => {
+                    var values = response.data[0].value
+
+                    values_outside = values
+
+                    for (let line of values) {
+                        var icon = {}
+                        const latlng = {
+                            lat: line.Latitude,
+                            lng: line.Longitude
+                        }
+                        console.log(line.Type)
+                        if (line.Type == 'Roadwork') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/roadwork_color.png",
+                                    scaledSize: new google.maps.Size(35, 35)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Vehicle breakdown') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/breakdown_color.png",
+                                    scaledSize: new google.maps.Size(35, 35)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Accident') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/accident_color.png",
+                                    scaledSize: new google.maps.Size(35, 35)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Unattended Vehicle') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/abandoned.png",
+                                    scaledSize: new google.maps.Size(35, 28)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Diversion') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/roadwork.png",
+                                    scaledSize: new google.maps.Size(35, 28)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Misc.') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/misc.png",
+                                    scaledSize: new google.maps.Size(35, 28)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Road Block') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/roadblock.png",
+                                    scaledSize: new google.maps.Size(35, 28)
+                                }
+                            });
+                        }
+                        if (line.Type == 'Heavy Traffic') {
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                map: window.map,
+                                icon: {
+                                    url: "../../src/img/traffic/congestion-removebg-preview.png",
+                                    scaledSize: new google.maps.Size(35, 28)
+                                }
+                            });
+                        }
+
+                        // var marker = new google.maps.Marker({position: latlng, map: window.map});
+                    }//end of for loop
+
+                    var firebaseConfig = {
+                        apiKey: "AIzaSyC6FeItoMxFnT9yIv5F8zukSMvhnZrH0YU",
+                        authDomain: "onestopper.firebaseapp.com",
+                        databaseURL: "https://onestopper-default-rtdb.asia-southeast1.firebasedatabase.app",
+                        projectId: "onestopper",
+                        storageBucket: "onestopper.appspot.com",
+                        messagingSenderId: "64753765868",
+                        appId: "1:64753765868:web:2f5a596f8d4a62d0e9c4c9",
+                        measurementId: "G-DE6MGV1BWE"
+                    };
+
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    } else {
+
+                    }
+
+                    var uid = JSON.parse(localStorage.getItem("users")).uid
+
+                    var ref = firebase.database().ref("/user_routes/" + uid)
+
+                    ref.on("value", function (snapshot) {
+                        //gkdflkgodfkgfglkdfg
+                        var route = snapshot.val().route.route
+                        console.log("this is value outside ")
+                        //console.log(route)
+                        console.log(values_outside)
+                        var accident_in_route = []
+                        var numba_of_stiff = 0
+                        for (obje of route) {
+
+                            // console.log(obje)
+                            var route_lat = obje.lat
+                            var round_route_lat = route_lat.toFixed(5)
+                            var route_lng = obje.lng
+                            var round_route_lng = route_lng.toFixed(5)
+                            // console.log(round_route_lat)
+                            // console.log(round_route_lng)
+                            for (var vall of values_outside) {
+                                var vall_latitude = vall.Latitude
+                                var vall_longititude = vall.Longitude
+                                var round_vall_lat = vall_latitude.toFixed(5)
+                                var round_vall_lng = vall_longititude.toFixed(5)
+                                if (round_route_lat == round_vall_lat && round_vall_lng == round_route_lng) {
+                                    numba_of_stiff += 1
+
+
+                                }
+                            }
+
+                        }
+                        var error_msg = "there are" + numba_of_stiff + "accidents/roadworks in your path!"
+                        if (numba_of_stiff > 0) {
+                            document.getElementById("left1").innerHTML = error_msg
+                        }
+                    }, function (error) {
+                        console.log("ERROR", error)
+                    })
+                })
+
+        }
+    </script>
+
+
+
+
 </body>
+
 </html>

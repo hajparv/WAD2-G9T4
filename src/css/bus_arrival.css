@@ -18,7 +18,10 @@
     list-style-type: none;
     padding-left: 10px;
     padding-right: 10px;
-    padding-bottom:10px
+    padding-bottom:10px;
+    border-left:  hsla(311, 37%, 32%) 2px solid;
+    border-right:  hsla(311, 37%, 32%) 2px solid;
+    border-bottom:  hsla(311, 37%, 32%) 2px solid;
 }
 
 #search li{
@@ -28,4 +31,14 @@
 
 #search li:hover{
     background-color: #ececec;
+}
+
+#dropdown{
+    border:  hsla(311, 37%, 32%) 2px solid;
+}
+
+#dropdown-list{
+    border-left:  hsla(311, 37%, 32%) 2px solid;
+    border-right:  hsla(311, 37%, 32%) 2px solid;
+    border-bottom:  hsla(311, 37%, 32%) 2px solid;
 }

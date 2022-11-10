@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details</title>
+
+    <!-- Vue.js 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="../src/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <link rel="stylesheet" href="../src/css/bus_arrival.css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg fs-4 fw-bold sticky-top"
+        style="background-color:#f0f0f0; color: rgb(112, 52, 101);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../../src/img/logo-removebg-preview.png" alt="Logo" width='75'
+                    class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav nav-fill w-100">
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" aria-current="page" href="../../index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle pb-0 active text-decoration-underline nav_bar_text" href="#"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Bus
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus_arrival.html">Bus Arrival
+                                    Time</a>
+                            </li>
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="bus_service_map.html">Bus
+                                    Services</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../train.html">Train</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="#">Taxi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../car.html">Car</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav_bar_text" href="../traffic/traffic_check.html">Traffic</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav float-end" id="profile">
+                    <!-- <li class="nav-item">
+                        <a href="../profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- TITLE -->
+    <h1 class="display-1 text-center fw-bold">
+        Get your route now!
+    </h1>
+
+
+
+    <script>
+        //Initialize and add the map
+        
+        function initMap() { //displaying user position on maps
+            // default: The location of SIS, SMU
+            var i = 0
+            var str = `<table class="center">
+                <tr>
+                    <th>Number</th>
+                    <th>Taxi</th>
+                </tr>`
+                
+            var lat = parseFloat(document.getElementById("lat").value);
+            var lng = parseFloat(document.getElementById("lng").value);
+            // var uluru = {lat: -25.344, lng: 131.036};
+            var loc = {lat: lat, lng: lng};
+
+            // The map, centered at SIS, SMU
+            var map = new google.maps.Map(
+            // play with the zoom value to zoom in or out
+            document.getElementById('map'), {zoom: 16, center: loc});
+            // The marker, positioned at SIS, SMU
+            var marker = new google.maps.Marker({position: loc, map: map});
+            // map = new google.maps.Map(document.getElementById("map"), {
+            //     center: { lat: 1.290, lng: 103.851 },
+            //     zoom: 13,
+            // });
+            infoWindow = new google.maps.InfoWindow();
+
+            const locationButton = document.createElement("button");
+
+            locationButton.textContent = "Pan to Current Location";
+            locationButton.classList.add("custom-map-control-button");
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+            locationButton.addEventListener("click", () => {
+                // Try HTML5 geolocation.
+                if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent("Location found.");
+                    infoWindow.open(map);
+                    map.setCenter(pos);
+                    let api_endpoint_url = '../../src/php/taxi/taxi_availability.php' 
+                    axios.get(api_endpoint_url)
+                    .then(response => {
+                    //console.log(response)
+                    for(res of response.data) {
+                        //console.log(res.value)
+                        document.getElementById("message").innerHTML = "<h1>Below are the available Taxi Stands near you</h1>"
+                        for(r of res.value) {
+                            // console.log(r.Longitude)
+                            // console.log(r.Latitude)
+                            var marker = new google.maps.Marker({
+                                position: {lat: r.Latitude, lng: r.Longitude},
+                                map: map
+                            }); 
+                            if(i < 5) {
+                                str += `<tr><td>${i+1}</td>`
+                                str += `<td>${r.Latitude}</td></tr>`
+                                i++
+                                let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${r.Latitude},${r.Longitude}&key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo`;
+                                fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data.results)
+                                })
+                            }
+                            
+                            
+                            
+                        }
+                    }
+                    str += `
+                            </table>`
+                    str = ""
+                    document.getElementById("taxi_table").innerHTML = str
+                })
+                .catch(error => {
+                    console.log(error.message)
+                })
+                    },
+                    () => {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                    }
+                );
+                } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+                }
+            });
+            }
+            
+
+            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                ? "Error: The Geolocation service failed."
+                : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
+        }
+        window.initMap = initMap;
+    </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo&libraries=places&callback=initMap&initAutocomplete"
+async defer></script>
+
+    <script>
+        // Ajax call
+        function getLoc(action) {
+            var addr = encodeURI(document.getElementById("addr").value);
+            console.log(addr);
+            var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addr + "&key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo";
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // following code may throw error if user input is invalid address
+                    // so we use try-catch block to handle errors
+                    try { 
+                        // expected response is JSON data
+                        var data = JSON.parse(this.responseText);
+                        console.log(data);
+
+                        var info = '';
+                        if (action == 'postcode') {
+                            // display postal code, given an address
+                            info = getPostCode(data);
+                        } else {
+                            // display full address, given post code or partial addr
+                            info = getFullAddress(data);
+                        }
+                        console.log(info);
+                        
+                        document.getElementById("display").innerHTML = info;
+                        // refresh the hidden input values with new lat lng coordinates
+                        var coordinate = getLatLng(data);
+                        document.getElementById("lat").value = coordinate["lat"];
+                        document.getElementById("lng").value = coordinate["lng"];
+                        // now refresh the map
+                        initMap();
+                    } catch(err) { // show error message
+                        // not a good idea to directly show err.message 
+                        // as it may contain sensitive info
+                        // document.getElementById("display").innerHTML = err.message;
+
+                        // show a predefined error message string
+                        document.getElementById("display").innerHTML = "Sorry, invalid address. Please try again!";
+                    }
+                }
+            };
+            
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function getFullAddress (data) {
+            var addr = data["results"][0]["formatted_address"];
+            var loc = getLatLng(data);
+            return addr + "<br> lat: " + loc["lat"] + ", lng: " + loc["lng"];
+        }
+
+        function getLatLng(data) {
+            var location= data["results"][0]["geometry"]["location"];
+            return location; 
+        }
+
+        function getPostCode(data) {
+            var addrcomponents = data["results"][0]["address_components"];
+            var postcode = addrcomponents.filter(postcodeHelper);
+            // country is an array but there should be only one element
+            return postcode[0]["long_name"];
+        }
+
+        function postcodeHelper(addr) {  
+            return addr["types"][0] == "postal_code" ;
+        }
+
+
+        function getKeys(data){
+            // data["results"][0] is an object
+            // this gets the keys/properties of results[0] object
+            var keys = Object.keys(data["results"][0]);
+            for (key of keys) {
+                // this prints --
+                /*  address_components
+                    formatted_address
+                    geometry
+                    place_id
+                    plus_code
+                    types */
+                document.getElementById("display").innerHTML += key + "<br>";
+            }
+        }
+
+        function getCountry(data) {
+            // this is an array
+            var addrcomponents = data["results"][0]["address_components"];
+            // The filter() method creates a new array with array elements that passes a test.
+            var country = addrcomponents.filter(countryHelper);
+            // country is an array but there should be only one element
+            return country[0]["long_name"];
+        }
+
+        function countryHelper(addr, index) {  
+            return addr["types"][0] == "country" ;
+        }
+
+        
+    </script>
+
+
+
+
+
+    <!--Display info for carparks near user-->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Carparks near you</h5>
+              <p class="card-text">Check the nearest parking for you.</p>
+              <div id="app">
+                <button v-on:click="carpark_avalibility()">click_avail</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">ERP Updates</h5>
+              <p class="card-text">Gantries closed at the moment</p>
+              <div id="app2">
+                <button v-on:click="get_erp_rate()">click_rates</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+
+<hr>
+<hr>
+<hr>
+
+
+        <!-- INPUT FORM -->
+
+        <!-- FOOTER -->
+        <div class="container-fluid text-center fs-1" style="color:#C79E53;">
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a href="#" class="nav-link"><i class="fa-brands fa-instagram"></i></a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#" class="nav-link"><i class="fa-brands fa-facebook-f"></i></a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#" class="nav-link"><i class="fa-brands fa-twitter"></i></a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#" class="nav-link"><i class="fa-brands fa-linkedin"></i></a>
+                </li>
+            </ul>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- <script src="../../src/js/bus_arrival.js"></script> -->
+        <script src="../src/js/erp_rates.js"></script>
+        <script src="../src/js/carpark_avalibility.js"></script>
+        
+
+
+</body>
+
+</html>

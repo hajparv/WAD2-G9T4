@@ -1,0 +1,29 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.min.js"></script>
+
+<div id="test-app">
+
+    <h1>
+        Hello world
+    </h1>
+
+    <h3>
+        {{this.message}}
+    </h3>
+
+</div>
+
+<script>
+
+var app = Vue.createApp({
+
+    data() {
+        return {
+            message: "hello world 12345!"
+        }
+    }
+
+})
+
+app.mount("#test-app")
+
+</script>

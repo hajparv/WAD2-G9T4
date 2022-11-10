@@ -1,6 +1,9 @@
 <?php
-function callAPI($method, $url, $data)
+function callAPI($method, $url, $data,$skip)
 {
+    if($skip != 0){
+        $url = $url . '?$skip=' . $skip;
+    }
     $curl = curl_init();
     switch ($method) {
         case "POST":
@@ -20,7 +23,7 @@ function callAPI($method, $url, $data)
     // OPTIONS:
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'accountkey: 3+qMwmsMR1+Y4uxlex3DvA==',
+        'accountkey: 5ptxG22hRBS/7/tow7/Mww==',
         'Content-Type: application/json',
     ));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -30,21 +33,25 @@ function callAPI($method, $url, $data)
     if (!$result) {
         die("Connection Failure");
     }
+    
     curl_close($curl);
     return $result;
 }
 
 
-$url = '';
-$url = 'http://datamall2.mytransport.sg/ltaodataservice/TrainServiceAlerts';
-
-
-// var_dump($url);
-
 $big_list = [];
-$get_data = callAPI('GET', $url, false);
+$get_data = callAPI('GET', 'http://datamall2.mytransport.sg/ltaodataservice/Taxi-Availability', false, 0);
 $response = json_decode($get_data, true);
+array_push($big_list,$response);
+$num = 500;
 
-//var_dump($response);
-echo json_encode($response);
+while(count($response['value']) != 0){
+    $get_data = callAPI('GET', 'http://datamall2.mytransport.sg/ltaodataservice/Taxi-Availability', false, $num);
+    $response = json_decode($get_data, true);
+    array_push($big_list,$response);
+    $num += 500;
+}
+
+echo json_encode($big_list);
+
 ?>

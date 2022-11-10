@@ -1,6 +1,9 @@
 <?php
-function callAPI($method, $url, $data)
+function callAPI($method, $url, $data,$skip)
 {
+    if($skip != 0){
+        $url = $url . '?$skip=' . $skip;
+    }
     $curl = curl_init();
     switch ($method) {
         case "POST":
@@ -35,16 +38,19 @@ function callAPI($method, $url, $data)
 }
 
 
-$url = '';
-$url = 'http://datamall2.mytransport.sg/ltaodataservice/TrainServiceAlerts';
-
-
-// var_dump($url);
-
 $big_list = [];
-$get_data = callAPI('GET', $url, false);
+$get_data = callAPI('GET', ' http://datamall2.mytransport.sg/ltaodataservice/TaxiStands', false, 0);
 $response = json_decode($get_data, true);
+array_push($big_list,$response);
+$num = 500;
 
-//var_dump($response);
-echo json_encode($response);
+while(count($response['value']) != 0){
+    $get_data = callAPI('GET', 'http://datamall2.mytransport.sg/ltaodataservice/TaxiStands', false, $num);
+    $response = json_decode($get_data, true);
+    array_push($big_list,$response);
+    $num += 500;
+}
+
+echo json_encode($big_list);
+
 ?>

@@ -9,29 +9,54 @@
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="src/css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-   
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script type="module" src="src/js/index.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <!-- This is the authentication API from Firebase Realtime Database -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>  -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-database.js"></script>
+    <!-- <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo&libraries=places"></script> -->
+    <!-- <script type="module" src="./helloworld.ts"></script> -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script>
+        var user_detail = localStorage.getItem("users")
+        console.log(user_detail)
+        var obj = JSON.parse(user_detail)
+        var username = obj.username
+        console.log(username)
+    </script>
 
-
-      <style>
-        /* Set the size of the div element that contains the map */
+    <style>
         #map {
-            height: 400px;  /* The height is 400 pixels */
-            width: 50%;  /* The width is the width of the web page */
-            
+            height: 600px;
+            /* The height is 400 pixels */
         }
-            /* Optional: Makes the sample page fill the window. */
 
-        
-      </style>
-    <title>One-Stop Planner</title>
+        #pac-input {
+            width: 300px
+        }
+
+        .navbar-nav .nav-link.active,
+        .navbar-nav .show>.nav-link {
+            color: rgb(112, 52, 101);
+        }
+    </style>
 </head>
 
-<body>
-    <!-- NAVIGATION BAR -->
-    <nav class="navbar navbar-expand-lg fs-4 fw-bold" style="background-color:#C79E53; color: #C4A872; ">
+<body onload="get_data()">
+
+    <title>One-Stop Planner</title>
+    <nav class="navbar navbar-expand-lg fs-4 fw-bold sticky-top"
+        style="background-color:#e5dfdf; color: rgb(112, 52, 101);">
         <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="src/img/logo2.png" alt="Logo" width='90' class="d-inline-block align-text-top">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -39,344 +64,377 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav nav-fill w-100">
                     <li class="nav-item">
-                        <a class="nav-link active text-decoration-underline" aria-current="page" href="index.html">Home</a>
+                        <a class="nav-link nav_bar_text active text-decoration-underline" aria-current="page"
+                            href="index.html">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle pb-0" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle pb-0  nav_bar_text" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Bus
                         </a>
-                        <ul class="dropdown-menu" style="background-color:#C79E53;">
-                            <li><a class="dropdown-item fw-bold" href="pages/bus/bus_arrival.html">Bus Arrival Time</a></li>
-                            <li><a class="dropdown-item fw-bold" href="#">Bus Services</a></li>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="pages/bus/bus_arrival.html">Bus
+                                    Arrival
+                                    Time</a>
+                            </li>
+                            <li><a class="dropdown-item fw-bold nav_bar_text" href="pages/bus/bus_service_map.html">Bus
+                                    Services</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./pages/train.html">Train</a>
+                        <a class="nav-link nav_bar_text" href="pages/train.html">Train</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Taxi</a>
+                        <a class="nav-link nav_bar_text" href="#">Taxi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Car</a>
+                        <a class="nav-link nav_bar_text" href="../car.html">Car</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="pages/traffic/traffic_check.html">Traffic</a>
+                        <a class="nav-link nav_bar_text" href="pages/traffic/traffic_check.html">Traffic</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav float-end">
-                    <li class="nav-item">
-                        <a href="pages/profile.html" class="nav-link"><i class="fa-sharp fa-solid fa-gear"></i></a>
+                <ul class="navbar-nav float-end" id="profile">
+                    <!-- <li class="nav-item">
+                        <a href="../profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="fa-solid fa-user" data-bs-toggle="modal" 
-                            data-bs-target="#modal" onClick="login"></i></a>
-
-
-                        <div class="modal" id="modal">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                          
-                                    <!-- Modal Header -->
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Login</h4>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    
-                                    <!-- Modal body -->
-                                    <div class="modal-body mx-auto">
-                                      <!-- <iframe id="iframe_${record.name}" width="560" height="50" src="" frameborder="0" 
-                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-                          
-                          
-                                        <form>
-                                              <div class="mb-3">
-                                                <label for="exampleInputEmail1" class="form-label"></label>
-                                                <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Email">
-                                                <div id="emailHelp" class="form-text"></div>
-                                              </div>
-                                              <div class="mb-3">
-                                                <label for="exampleInputPassword1" class="form-label"></label>
-                                                <input type="password" class="form-control" id="InputPassword1" placeholder="Password">
-                                              </div>
-                                              <br>
-                                              <button type="submit" class="btn justify-content" style="background-color: #c4a872;">Go</button>
-                                            </form>
-                          
-                                            <h4 style="text-align: center">OR</h4>
-                                           <button type="submit" class="btn " style="background-color: #c4a872 ;justify-content: center; " >Sign up</button>
-                          
-                                    </div>
-                                                                            
-                                    <!-- Modal footer -->
-                                    <div class="modal-footer">
-                                        
-                                    </div>
-                          
-                                </div>
-                            </div>
-                          </div>
-                    </li>
+                        <a href="../../login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li> -->
                 </ul>
             </div>
         </div>
     </nav>
+    <!-- <div class="container text-center py-3" id="username"> -->
+    <h1 class="display-6 text-center fw-bold m-5" id="username">
+    </h1>
+
+    </div>
 
     <!--TEXT BOX-->
-<div class="container py-5"  id="app">
-    <div class="row align-items-start">
-    <div class="col-10">
+    <!-- <div class="container"  style="background:url(./src/img/transport-backgrounf.jpg); background-repeat: repeat-y;"> -->
 
-        <div class="row justify-content-md-center" style="color:#C79E53;">
-            <div class="input-group mb-3 w-50 " >
-                <span class="input-group-text" id="inputGroup-sizing-default" style="background-color:#C79E53;">From</span>
-                <input id="pac-input" type="text" class="controls" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;" placeholder="where are you?">
+
+    <!-- <div class="container-fluid ms-5 mb-2"> -->
+
+    <div class="row justify-content-left ms-5">
+        <div class="col-4">
+            <div class="row justify-content-md-center" style="color:rgb(112, 52, 101);">
+                <div class="input-group mb-3 input-group-lg">
+                    <span class="input-group-text" style="background-color:rgb(112, 52, 101); color:white">From</span>
+                    <input id="from" type="text" class="form-control" style="background-color:#e5dfdf;"
+                        placeholder="where are you?">
+                </div>
             </div>
-        </div>
-    
+            <div class="col-12">
+                <div class="input-group mb-3 input-group-lg">
+                    <span class="input-group-text" style="background-color:rgb(112, 52, 101); color:white">To</span>
+                    <input id="to" type="text" class="form-control" style="background-color:#e5dfdf;"
+                        placeholder="where do you want to go?">
+                </div>
+            </div>
 
-         <div class="row justify-content-md-center">
-            <div class="input-group mb-3 w-50 ">
-                <span class="input-group-text" id="inputGroup-sizing-default"
-                style="background-color:#C79E53;">To</span>
-                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" style="background-color:#EFECDF;" placeholder="where do you want to go?">
-            </div> 
+            <div class="col-12">
+                <h2 class="fw-bold fs-5">Select a mode of transportation:</h2>
+
+            </div>
+            <div class="col-12">
+                <select id="mode" class="form-select form-select-lg mb-3">
+                    <option value="DRIVING">Driving</option>
+                    <option value="WALKING">Walking</option>
+                    <option value="BICYCLING">Bicycling</option>
+                    <option value="TRANSIT">Transit</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <span type="button" class="btn btn-lg" style="background-color:rgb(112, 52, 101); color:white"
+                    onclick="calcRoute()">Go</span>
+                <span type="button" class="btn btn-lg" style="background-color:rgb(112, 52, 101); color:white"
+                    onclick="save_route_in_db()">Save</span>
+            </div>
+
+            <div class="col-12">
+                <div id="output">
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-7">
+            <div id="map"></div>
         </div>
     </div>
 
-            <div class="col-2">
-                <span type="button" class="btn mt-2" style="background-color:#C79E53;">Go</span>
+    <div class="container" id="app">
+        <span id="fav" class="ms-2"></span>
+        <div class="output text-center">
+            <div id="output">
             </div>
-       
         </div>
-</div>   
-    
-   
 
-</div>
-    <h3 class="container">
-        Favourite route
-    </h3>
+        <div class="row">
 
-    <div id="map" class="mx-auto"></div>
+            <div class="col-4">
+
+
+                <ol id="steps" class="fs-4">
+
+                </ol>
+
+            </div>
+
+            <div class="col-8">
+                <div id="map"></div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+    <!-- </div> -->
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBohQllg13oqNG10s28iZOiUsBw7nFWDlU&libraries=places">
+    </script>
+
+    <script src="./src/js/map.js"></script>
     <script>
-        // Initialize and add the map
-        function initMap() {
-            // default: The location of SIS, SMU
-            var lat = parseFloat(document.getElementById("lat").value);
-            var lng = parseFloat(document.getElementById("lng").value);
-            // var uluru = {lat: -25.344, lng: 131.036};
-            var loc = {lat: lat, lng: lng};
+        function get_data() {
+            if (user_detail != null) {
+                document.getElementById('username').innerText = "Welcome " + username;
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="./pages/profile.html" class="nav-link nav_bar_text justify-content-center"><i
+                                class="fa-sharp fa-solid fa-gear"></i></a>
+                    </li>`
+            } else {
+                document.getElementById('username').innerText = "Welcome";
+                document.getElementById('profile').innerHTML = `<li class="nav-item">
+                        <a href="./login.html" class="nav-link nav_bar_text"><i class="fa-solid fa-user"></i></a>
+                    </li>`
+            }
+        }
 
-            // The map, centered at SIS, SMU
-            var map = new google.maps.Map(
-                // play with the zoom value to zoom in or out
-                document.getElementById('map'), {zoom: 14, center: loc});
-            // The marker, positioned at SIS, SMU
-            var marker = new google.maps.Marker({position: loc, map: map});
+        function user_login() {
+            console.log('user_login')
+            if (user_detail != null) {
+                console.log('hree')
+                document.getElementById('fav').innerHTML =
+                    `<button type="button" class="btn btn-secondary mt-2 checked"
+                onclick="save_destination()" id='fav_button'><i class="fa-solid fa-star"></i> Favourite</button>`;
+                // console.log(find_all_favs())
+            }
+        }
 
+        function save_destination() {
+            var user_detail = localStorage.getItem("users")
+            console.log(user_detail)
+            var obj = JSON.parse(user_detail)
+            var uid = obj.uid
+            console.log(uid)
+            var destination = ''
+            firebase.database().ref('users/' + uid).once("value", snap => {
 
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 6,
-            });
-            infoWindow = new google.maps.InfoWindow();
+                console.log(snap.val())
+                destination = snap.val().fav_destination
 
-            const locationButton = document.createElement("button");
+                if (destination == '') {
+                    var users = firebase.database().ref('users');
+                    document.getElementById('fav_button').style.color += 'orange'
+                    var service_no = document.getElementById('to').innerText
 
-            locationButton.textContent = "Pan to Current Location";
-            locationButton.classList.add("custom-map-control-button");
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-            locationButton.addEventListener("click", () => {
-                // Try HTML5 geolocation.
-                if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                    const pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var fav_destination = obj.fav_destination
+                    console.log(fav_destination)
 
-                    infoWindow.setPosition(pos);
-                    infoWindow.setContent("Location found.");
-                    infoWindow.open(map);
-                    map.setCenter(pos);
-                    },
-                    () => {
-                    handleLocationError(true, infoWindow, map.getCenter());
-                    }
-                );
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var uid = obj.uid
+                    console.log(uid)
+
+                    var updates = {};
+                    updates['/users/' + uid + "/" + 'fav_to'] = to;
+                    firebase.database().ref().update(updates);
                 } else {
-                // Browser doesn't support Geolocation
-                handleLocationError(false, infoWindow, map.getCenter());
+                    var users = firebase.database().ref('users');
+                    document.getElementById('fav_button').style.color += 'orange'
+                    var to = document.getElementById('to').innerText
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var fav_destination = obj.fav_destination
+                    console.log(fav_destination)
+
+                    var user_detail = localStorage.getItem("users")
+                    console.log(user_detail)
+                    var obj = JSON.parse(user_detail)
+                    var uid = obj.uid
+                    console.log(uid)
+
+                    var updates = {};
+                    updates['/users/' + uid + "/" + 'fav_to'] = to;
+                    firebase.database().ref().update(updates);
                 }
-            });
-            }
-
-            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-            infoWindow.setPosition(pos);
-            infoWindow.setContent(
-                browserHasGeolocation
-                ? "Error: The Geolocation service failed."
-                : "Error: Your browser doesn't support geolocation."
-            );
-            infoWindow.open(map);
-                    }
-
-        window.initMap = initMap;
+            })
+        }
     </script>
-    
-    <!--Load the API from the specified URL
-    * The async attribute allows the browser to render the page while the API loads
-    * The key parameter will contain your own API key 
-    * The callback parameter executes the initMap() function
-    -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo&callback=initMap"
-    async defer></script>
-
-    <div class="jumbotron">          
-        
-        <form>
-            <div class="form-group">
-                <!-- <label for="addr">Enter An Address</label>
-                <input type="text" class="form-control" name="addr" id="addr" placeholder="E.g. Singapore Management University" >
-                <br><button type="button" onclick="getLoc('addr')" class="btn btn-primary">Get Full Address!</button>
-                <button type="button" onclick="getLoc('postcode')" class="btn btn-primary">Get Postal Code!</button> -->
-                <!-- the following set the lat, lng values to put a marker on the map-->
-                <input type="hidden" id="lat" name="lat" value="1.2973784" />
-                <input type="hidden" id="lng" name="lng" value="103.8495219" />
-            </div>
-            <p id="display" class="lead text-center"></p>
-        </form>
-    </div>
-
-    <script>
-        // Ajax call
-        function getLoc(action) {
-            var addr = encodeURI(document.getElementById("addr").value);
-            console.log(addr);
-            var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addr + "&key=AIzaSyAs1iuRLcEdqMoZ9F_KzCdanQg-e66A4Fo";
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    // following code may throw error if user input is invalid address
-                    // so we use try-catch block to handle errors
-                    try { 
-                        // expected response is JSON data
-                        var data = JSON.parse(this.responseText);
-                        console.log(data);
-
-                        var info = '';
-                        if (action == 'postcode') {
-                            // display postal code, given an address
-                            info = getPostCode(data);
-                        } else {
-                            // display full address, given post code or partial addr
-                            info = getFullAddress(data);
-                        }
-                        console.log(info);
-                        
-                        document.getElementById("display").innerHTML = info;
-                        // refresh the hidden input values with new lat lng coordinates
-                        var coordinate = getLatLng(data);
-                        document.getElementById("lat").value = coordinate["lat"];
-                        document.getElementById("lng").value = coordinate["lng"];
-                        // now refresh the map
-                        initMap();
-                    } catch(err) { // show error message
-                        // not a good idea to directly show err.message 
-                        // as it may contain sensitive info
-                        // document.getElementById("display").innerHTML = err.message;
-
-                        // show a predefined error message string
-                        document.getElementById("display").innerHTML = "Sorry, invalid address. Please try again!";
-                    }
-                }
-            };
-            
-            xhttp.open("GET", url, true);
-            xhttp.send();
-        }
-
-        function getFullAddress (data) {
-            var addr = data["results"][0]["formatted_address"];
-            var loc = getLatLng(data);
-            return addr + "<br> lat: " + loc["lat"] + ", lng: " + loc["lng"];
-        }
-
-        function getLatLng(data) {
-            var location= data["results"][0]["geometry"]["location"];
-            return location; 
-        }
-
-        function getPostCode(data) {
-            var addrcomponents = data["results"][0]["address_components"];
-            var postcode = addrcomponents.filter(postcodeHelper);
-            // country is an array but there should be only one element
-            return postcode[0]["long_name"];
-        }
-
-        function postcodeHelper(addr) {  
-            return addr["types"][0] == "postal_code" ;
-        }
-
-
-        function getKeys(data){
-            // data["results"][0] is an object
-            // this gets the keys/properties of results[0] object
-            var keys = Object.keys(data["results"][0]);
-            for (key of keys) {
-                // this prints --
-                /*  address_components
-                    formatted_address
-                    geometry
-                    place_id
-                    plus_code
-                    types */
-                document.getElementById("display").innerHTML += key + "<br>";
-            }
-        }
-
-        function getCountry(data) {
-            // this is an array
-            var addrcomponents = data["results"][0]["address_components"];
-            // The filter() method creates a new array with array elements that passes a test.
-            var country = addrcomponents.filter(countryHelper);
-            // country is an array but there should be only one element
-            return country[0]["long_name"];
-        }
-
-        function countryHelper(addr, index) {  
-            return addr["types"][0] == "country" ;
-        }
-
-        
-    </script>
-
-
 
 
     <!-- FOOTER -->
-    <div class="fixed-bottom container-fluid text-center fs-1" style="color:#C79E53;">
+    <div class="container-fluid text-center fs-1">
         <ul class="list-inline">
             <li class="list-inline-item">
-                <a href="#" class="nav-link"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-instagram"></i></a>
             </li>
             <li class="list-inline-item">
-                <a href="#" class="nav-link"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="nav-link nav_bar_text "><i class="fa-brands fa-facebook-f"></i></a>
             </li>
             <li class="list-inline-item">
-                <a href="#" class="nav-link"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-twitter"></i></a>
             </li>
             <li class="list-inline-item">
-                <a href="#" class="nav-link"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" class="nav-link nav_bar_text"><i class="fa-brands fa-linkedin"></i></a>
             </li>
         </ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
-    </script>
+        </script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <script>
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions)
+
+        //create a directions service object
+
+        var directionsService = new google.maps.DirectionsService();
+
+        //create a directionsRenderer object which we will use to display route
+        var rendererOptions = {
+            map: map
+        }
+
+        var directionsRenderer = new google.maps.DirectionsRenderer(rendererOptions);
+
+        //bind the directionsRenderer to the map 
+
+        directionsRenderer.setMap(map);
+
+        // Instantiate an info window to hold step text.
+        stepDisplay = new google.maps.InfoWindow();
+
+
+        function save_route_in_db() {
+
+            var request = {
+                origin: document.getElementById('from').value,
+                destination: document.getElementById('to').value,
+                travelMode: google.maps.TravelMode[document.getElementById("mode").value],
+                unitSystem: google.maps.UnitSystem.METRIC
+            }
+
+            directionsService.route(request, (result, status) => {
+                if (status == google.maps.DirectionsStatus.OK) {
+
+                    var route = []
+
+                    for (const point of result.routes[0].overview_path) {
+                        route.push({
+
+                            lat: point.lat(),
+                            lng: point.lng()
+                        })
+                    }
+
+
+                    var toSave = {
+                        origin: document.getElementById('from').value,
+                        destination: document.getElementById('to').value,
+                        route: route
+                    }
+
+                    var uid = JSON.parse(localStorage.getItem("users")).uid
+                    var useremail = JSON.parse(localStorage.getItem("users")).email
+
+                    toSave['email'] = useremail
+
+
+                    var updates1 = {};
+                    updates1['/user_routes/' + uid + "/route"] = toSave;
+
+                    var firebaseConfig = {
+                        apiKey: "AIzaSyC6FeItoMxFnT9yIv5F8zukSMvhnZrH0YU",
+                        authDomain: "onestopper.firebaseapp.com",
+                        databaseURL: "https://onestopper-default-rtdb.asia-southeast1.firebasedatabase.app",
+                        projectId: "onestopper",
+                        storageBucket: "onestopper.appspot.com",
+                        messagingSenderId: "64753765868",
+                        appId: "1:64753765868:web:2f5a596f8d4a62d0e9c4c9",
+                        measurementId: "G-DE6MGV1BWE"
+                    };
+
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    } else {
+
+                    }
+
+                    console.log("abcde")
+
+                    firebase.database().ref().update(updates1);
+                } else {
+
+                    console.log("else loop runs")
+                    //delete route from map 
+                    directionsRenderer.setDirections({
+                        routes: []
+                    });
+
+                    //center map in spain 
+                    map.setCenter(myLatLng);
+
+                    //show error msg
+                    output.innerHTML =
+                        "<div class='alert-danger'><i class='fas fa-exclamation-triangle'></i> Could not retrieve distance </div>"
+                }
+            })
+        }
+        // TO CHECK IF USER
+        function user_login() {
+            console.log('user_login')
+            if (user_detail != null) {
+                console.log('hree')
+                document.getElementById('fav').innerHTML =
+                    `<button type="button" class="btn btn-secondary mt-2 checked"
+            onclick="save_bus_stop()" id='fav_button'><i class="fa-solid fa-star"></i> Favourite</button>`;
+                // console.log(find_all_favs())
+            }
+        }
+
+        // TO SAVE THE FAV BUS STOP
+        function save_bus_stop() {
+            var user_detail = localStorage.getItem("users")
+            console.log(user_detail)
+            var obj = JSON.parse(user_detail)
+            var uid = obj.uid
+            console.log(uid)
+            var bus_stops = ''
+            firebase.database().ref('users/' + uid).once("value", snap => {
+
+                console.log(snap.val())
+                bus_stops = snap.val().fav_bus_stop
+
+
+
+            })
+        }
+    </script>
 
 </body>
 
